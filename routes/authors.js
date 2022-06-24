@@ -41,6 +41,7 @@ router.post('/', async (req, res) => {
   }
 })
 
+// /:id 이면 :id로 넘어오는 요청을 req.params.id로 조회가능. :type이면 req.param.type으로 조회가능
 router.get('/:id', async (req, res) => {
   try {
     const author = await Author.findById(req.params.id)

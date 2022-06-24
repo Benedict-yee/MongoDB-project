@@ -1,7 +1,10 @@
 const express = require('express')
+const mongoose = require ('mongoose')
 const router = express.Router()
 const Book = require('../models/book')
 const Author = require('../models/author')
+const Map = require('../models/map')
+const { emit } = require('../models/book')
 const imageMimeTypes = ['image/jpeg', 'image/png', 'images/gif']
 
 // All Books Route
@@ -10,11 +13,11 @@ router.get('/', async (req, res) => {
   if (req.query.title != null && req.query.title != '') {
     query = query.regex('title', new RegExp(req.query.title, 'i'))
   }
-  if (req.query.publishedBefore != null && req.query.publishedBefore != '') {
-    query = query.lte('publishDate', req.query.publishedBefore)
+  if (req.query.releasedBefore != null && req.query.releasedBefore != '') {
+    query = query.lte('releaseDate', req.query.releasedBefore)
   }
-  if (req.query.publishedAfter != null && req.query.publishedAfter != '') {
-    query = query.gte('publishDate', req.query.publishedAfter)
+  if (req.query.releasedAfter != null && req.query.releasedAfter != '') {
+    query = query.gte('releaseDate', req.query.releasedAfter)
   }
   try {
     const books = await query.exec()
@@ -22,6 +25,34 @@ router.get('/', async (req, res) => {
       books: books,
       searchOptions: req.query
     })
+  } catch {
+    res.redirect('/')
+  }
+})
+
+// Book Data Route
+router.get('/map', async (req, res) => {
+  let o={}  
+  o.map = function() {
+    emit(this.releaseDate, this.title)      
+  }
+  o.reduce = function (key, values) {
+    return values.length
+  }
+  o.out = {
+    replace: 'maps'
+  }
+  o.verbose = true;
+  
+  try {
+  Book.mapReduce(o, function(err,model,stats) {    
+    
+    mongoose.model('Map').find().sort({'value':-1}).limit(1).exec(function (err, docs) {
+      res.render('books/map',{
+        movie: docs
+        })
+      })
+    })   
   } catch {
     res.redirect('/')
   }
@@ -36,10 +67,11 @@ router.get('/new', async (req, res) => {
 router.post('/', async (req, res) => {
   const book = new Book({
     title: req.body.title,
-    author: req.body.author,
-    publishDate: new Date(req.body.publishDate),
-    pageCount: req.body.pageCount,
-    description: req.body.description
+    voteAverage: req.body.voteAverage,
+    popularity: req.body.popularity,
+    releaseDate: new Date(req.body.releaseDate),
+
+    overview: req.body.overview
   })
   saveCover(book, req.body.cover)
 
@@ -55,8 +87,7 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const book = await Book.findById(req.params.id)
-                           .populate('author')
-                           .exec()
+
     res.render('books/show', { book: book })
   } catch {
     res.redirect('/')
@@ -79,11 +110,13 @@ router.put('/:id', async (req, res) => {
 
   try {
     book = await Book.findById(req.params.id)
-    book.title = req.body.title
-    book.author = req.body.author
-    book.publishDate = new Date(req.body.publishDate)
-    book.pageCount = req.body.pageCount
-    book.description = req.body.description
+    book.title = req.body.title,
+    book.voteAverage = req.body.voteAverage,
+    book.popularity = req.body.popularity,
+    book.releaseDate = new Date(req.body.releaseDate),
+
+    book.overview = req.body.overview
+
     if (req.body.cover != null && req.body.cover !== '') {
       saveCover(book, req.body.cover)
     }
@@ -127,9 +160,9 @@ async function renderEditPage(res, book, hasError = false) {
 
 async function renderFormPage(res, book, form, hasError = false) {
   try {
-    const authors = await Author.find({})
+    const books = await Book.find({})
     const params = {
-      authors: authors,
+      title: books,
       book: book
     }
     if (hasError) {

@@ -5,21 +5,20 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  description: {
+  overview: {
     type: String
   },
-  publishDate: {
-    type: Date,
-    required: true
-  },
-  pageCount: {
+  voteAverage: {
     type: Number,
     required: true
   },
-  createdAt: {
+  releaseDate: {
     type: Date,
-    required: true,
-    default: Date.now
+    required: true
+  },
+  adult: {
+    type: Boolean
+
   },
   coverImage: {
     type: Buffer,
@@ -29,10 +28,9 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Author'
+  popularity: {
+    type: Number,
+    required: true
   }
 })
 

@@ -17,7 +17,7 @@
     flex-grow: 1;
     flex-basis: 0;
   }
-  
+
   .form-item:first-child {
     margin-left: 0;
   }

@@ -1,0 +1,44 @@
+<h2 class="page-header">Map Reduce Result</h2>
+
+<div class="form-row">
+    <div class="form-item">
+        <label>What is the most number of trending movies that have been released on the same day? </label>
+    </div>        
+</div>    
+  
+<div class="author-row">
+    <div class=".book-details-label"><%= movie %></div>
+</div>
+
+<h2 class="page-header">Map Reduce Query</h2>
+<div class="author-row">
+    <div class="author-name">
+        
+        router.get('/map', async (req, res) => {<br>
+        let o={}  <br>
+        o.map = function() {<br>
+          emit(this.releaseDate, this.title)    <br>  
+        }<br>
+        o.reduce = function (key, values) {<br>
+          return values.length<br>
+        }<br>
+        o.out = {<br>
+          replace: 'maps'<br>
+        }<br>
+        o.verbose = true;<br>
+        <br>
+        try {<br>
+        Book.mapReduce(o, function(err,model,stats) {   <br> 
+            <br>
+          mongoose.model('Map').find().sort({'value':-1}).limit(1).exec(function (err, docs) {<br>
+            res.render('books/map',{<br>
+              movie: docs<br>
+              })<br>
+            })<br>
+          })   <br>
+        } catch {<br>
+          res.redirect('/')<br>
+        }<br>
+      })<br>
+      </div>
+</div>
