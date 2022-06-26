@@ -13,3 +13,6 @@ git add .
 git commit -m "Initial Setup"
 git push -u origin master
 git push heroku master
+
+set up cloud db 'mongodb atlas' for heroku deployment
+API key = 227a3cd4bc3ed795cd53b244a1ce30ef
