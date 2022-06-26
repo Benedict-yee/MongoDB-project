@@ -15,4 +15,5 @@ git push -u origin master
 git push heroku master
 
 set up cloud db 'mongodb atlas' for heroku deployment
+https://api.themoviedb.org/3/movie/popular?api_key=your_api_key
 API key = 227a3cd4bc3ed795cd53b244a1ce30ef

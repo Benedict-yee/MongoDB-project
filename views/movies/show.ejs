@@ -1,0 +1,21 @@
+<h2 class="page-header"><%= movie.title %></h2>
+<div class="movie-details">
+  <div>
+    <img class="movie-cover" src="<%= movie.coverImagePath %>">
+    <div class="movie-details-btn-grid">
+      <a class="btn btn-primary" href="/movies/<%= movie.id %>/edit">Edit</a>
+      <%- include('../partials/deleteForm', { url: `/movies/${movie.id}` }) %>
+      
+    </div>
+  </div>
+  <div class="movie-details-grid">
+    <div class="movie-details-label">Title:</div>
+    <div><%= movie.title %></div>
+    <div class="movie-details-label">Release Date:</div>
+    <div><%= movie.releaseDate.toDateString() %></div>
+    <div class="movie-details-label">Popularity:</div>
+    <div><%= movie.popularity %></div>
+    <div class="movie-details-label">Overview:</div>
+    <div><%= movie.overview %></div>
+  </div>
+</div>

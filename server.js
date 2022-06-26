@@ -9,8 +9,7 @@ const bodyParser=require('body-parser')
 const methodOverride = require('method-override')
 
 const indexRouter=require('./routes/index') // import index router
-const authorRouter=require('./routes/authors')
-const bookRouter = require('./routes/books')
+const movieRouter = require('./routes/movies')
 
 
 app.set('view engine','ejs') // we use 'ejs' as our view engine, so pass in 'ejs'
@@ -29,8 +28,7 @@ db.once('open', () => console.log('Connected to Mongoose'))
 
 
 app.use('/',indexRouter) // use index router
-app.use('/authors',authorRouter)
-app.use('/books', bookRouter)
+app.use('/movies', movieRouter)
 
 
 app.listen(process.env.PORT || 3000)
